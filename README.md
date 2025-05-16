@@ -1,215 +1,138 @@
-## Laboratory work VI
+## Лабораторная работа 7
 
-##Подготовка рабочей директории 
+## Подготовка рабочей директории
 ```bash
-root@LabPythonVM:/home/student/Vladimir1209/workspace# git clone https://github.com/${GITHUB_USERNAME}/lab05 projects/lab06
-Клонирование в «projects/lab06»...
-remote: Enumerating objects: 42, done.
-remote: Counting objects: 100% (42/42), done.
-remote: Compressing objects: 100% (23/23), done.
-remote: Total 42 (delta 11), reused 42 (delta 11), pack-reused 0 (from 0)
-Получение объектов: 100% (42/42), 8.94 КиБ | 8.94 МиБ/с, готово.
-Определение изменений: 100% (11/11), готово.
-root@LabPythonVM:/home/student/Vladimir1209/workspace# cd projects/lab06
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git remote remove origin
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git remote add origin https://github.com/${GITHUB_USERNAME}/lab06
+root@LabPythonVM:/home/student/MaRLoR-64/workspace# export GITHUB_USERNAME=MaRLoR-64
+root@LabPythonVM:/home/student/MaRLoR-64/workspace# alias gsed=sed
+root@LabPythonVM:/home/student/MaRLoR-64/workspace# source scripts/activate
+root@LabPythonVM:/home/student/MaRLoR-64/workspace# git clone https://github.com/${GITHUB_USERNAME}/lab06 projects/lab07
+Клонирование в «projects/lab07»...
+remote: Enumerating objects: 51, done.
+remote: Counting objects: 100% (51/51), done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 51 (delta 15), reused 47 (delta 14), pack-reused 0
+Получение объектов: 100% (51/51), 13.13 КиБ | 292.00 КиБ/с, готово.
+Определение изменений: 100% (15/15), готово.
+root@LabPythonVM:/home/student/MaRLoR-64/workspace# cd projects/lab07
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# git remote remove origin
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# git remote add origin https://github.com/${GITHUB_USERNAME}/lab07
 ```
-##Настройка Cmake
+Настройка Hunter и сборка проекта
 ```bash
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION_STRING "v\${PRINT_VERSION}")
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION\
-  \${PRINT_VERSION_MAJOR}.\${PRINT_VERSION_MINOR}.\${PRINT_VERSION_PATCH}.\${PRINT_VERSION_TWEAK})
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION_TWEAK 0)
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION_TWEAK 0)
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION_PATCH 0)
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION_MINOR 1)
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i '/project(print)/a\
-> set(PRINT_VERSION_MAJOR 0)
-' CMakeLists.txt
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git diff
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0753258..6798547 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -8,6 +8,14 @@ option(BUILD_TESTS "Build tests" OFF)
- option(BUILD_TESTS "Build tests" OFF)
- 
- project(print)
-+set(PRINT_VERSION_MAJOR 0)
-+set(PRINT_VERSION_MINOR 1)
-+set(PRINT_VERSION_PATCH 0)
-+set(PRINT_VERSION_TWEAK 0)
-+set(PRINT_VERSION_TWEAK 0)
-+set(PRINT_VERSION
-+  ${PRINT_VERSION_MAJOR}.${PRINT_VERSION_MINOR}.${PRINT_VERSION_PATCH}.${PRINT_VERSION_TWEAK})
-+set(PRINT_VERSION_STRING "v${PRINT_VERSION}")
- 
- add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
- 
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# touch DESCRIPTION && edit DESCRIPTION
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# touch ChangeLog.md
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# export DATE="`LANG=en_US date +'%a %b %d %Y'`"
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat > ChangeLog.md <<EOF
-> * ${DATE} ${GITHUB_USERNAME} <${GITHUB_EMAIL}> 0.1.0.0
-- Initial RPM release
-> EOF
-```
-##Настройка CPack
-```bash
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat > CPackConfig.cmake <<EOF
-> include(InstallRequiredSystemLibraries)
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CPackConfig.cmake <<EOF
-> set(CPACK_PACKAGE_CONTACT ${GITHUB_EMAIL})
-set(CPACK_PACKAGE_VERSION_MAJOR \${PRINT_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR \${PRINT_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH \${PRINT_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION_TWEAK \${PRINT_VERSION_TWEAK})
-set(CPACK_PACKAGE_VERSION \${PRINT_VERSION})
-set(CPACK_PACKAGE_DESCRIPTION_FILE \${CMAKE_CURRENT_SOURCE_DIR}/DESCRIPTION)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "static C++ library for printing")
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CPackConfig.cmake <<EOF
-> set(CPACK_RESOURCE_FILE_LICENSE \${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
-set(CPACK_RESOURCE_FILE_README \${CMAKE_CURRENT_SOURCE_DIR}/README.md)
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CPackConfig.cmake <<EOF
-> set(CPACK_RPM_PACKAGE_NAME "print-devel")
-set(CPACK_RPM_PACKAGE_LICENSE "MIT")
-set(CPACK_RPM_PACKAGE_GROUP "print")
-set(CPACK_RPM_CHANGELOG_FILE \${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md)
-set(CPACK_RPM_PACKAGE_RELEASE 1)
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CPackConfig.cmake <<EOF
-> set(CPACK_DEBIAN_PACKAGE_NAME "libprint-dev")
-set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "cmake >= 3.0")
-set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CPackConfig.cmake <<EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CPackConfig.cmake <<EOF
-> include(CPack)
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cat >> CMakeLists.txt <<EOF
-> include(CPackConfig.cmake)
-> EOF
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# gsed -i 's/lab05/lab06/g' README.md
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git add .
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git commit -m"added cpack config"
-[master da99064] added cpack config
- 5 files changed, 49 insertions(+), 17 deletions(-)
- create mode 100644 CPackConfig.cmake
- create mode 100644 ChangeLog.md
- create mode 100644 DESCRIPTION
-```
-##Сборка проекта
-```bash
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git tag v0.1.0.0
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# 
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git push origin master --tags
-Username for 'https://github.com': Vladimir1209
-Password for 'https://Vladimir1209@github.com': 
-remote: Repository not found.
-fatal: repository 'https://github.com/Vladimir1209/lab06/' not found
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git push origin master --tags
-Username for 'https://github.com': Vladimir1209
-Password for 'https://Vladimir1209@github.com': 
-remote: Repository not found.
-fatal: repository 'https://github.com/Vladimir1209/lab06/' not found
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# git push origin master --tags
-Username for 'https://github.com': Vladimir1209
-Password for 'https://Vladimir1209@github.com': 
-Перечисление объектов: 48, готово.
-Подсчет объектов: 100% (48/48), готово.
-При сжатии изменений используется до 4 потоков
-Сжатие объектов: 100% (29/29), готово.
-Запись объектов: 100% (48/48), 9.96 КиБ | 9.96 МиБ/с, готово.
-Всего 48 (изменений 14), повторно использовано 39 (изменений 11), повторно использовано пакетов 0
-remote: Resolving deltas: 100% (14/14), done.
-To https://github.com/Vladimir1209/lab06
- * [new branch]      master -> master
- * [new tag]         v0.1.0.0 -> v0.1.0.0
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# travis login --auto
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# travis enable
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cmake -H. -B_build
--- Configuring done
--- Generating done
--- Build files have been written to: /home/student/Vladimir1209/workspace/projects/lab06/_build
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cmake -H. -B_build
--- Configuring done
--- Generating done
--- Build files have been written to: /home/student/Vladimir1209/workspace/projects/lab06/_build
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cmake --build _build
-[ 50%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
-[100%] Linking CXX static library libprint.a
-[100%] Built target print
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cd _build
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06/_build# cpack -G "TGZ"
-CPack: Create package using TGZ
-CPack: Install projects
-CPack: - Run preinstall target for: print
-CPack: - Install project: print []
-CPack: Create package
-CPack: - package: /home/student/Vladimir1209/workspace/projects/lab06/_build/print-0.1.0.0-Linux.tar.gz generated.
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06/_build# cd ..
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cmake -H. -B_build -DCPACK_GENERATOR="TGZ"
--- Configuring done
--- Generating done
--- Build files have been written to: /home/student/Vladimir1209/workspace/projects/lab06/_build
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# cmake --build _build --target package
-[100%] Built target print
-Run CPack packaging tool...
-CPack: Create package using TGZ
-CPack: Install projects
-CPack: - Run preinstall target for: print
-CPack: - Install project: print []
-CPack: Create package
-CPack: - package: /home/student/Vladimir1209/workspace/projects/lab06/_build/print-0.1.0.0-Linux.tar.gz generated.
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# mkdir artifacts
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# mv _build/*.tar.gz artifacts
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# tree artifacts
-artifacts
-└── print-0.1.0.0-Linux.tar.gz
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# mkdir -p cmake
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# wget https://raw.githubusercontent.com/cpp-pm/gate/master/cmake/HunterGate.cmake -O cmake/HunterGate.cmake
+--2025-04-17 22:29:05--  https://raw.githubusercontent.com/cpp-pm/gate/master/cmake/HunterGate.cmake
+Распознаётся raw.githubusercontent.com (raw.githubusercontent.com)… 185.199.111.133, 185.199.108.133, 185.199.110.133, ...
+Подключение к raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... соединение установлено.
+HTTP-запрос отправлен. Ожидание ответа… 200 OK
+Длина: 17231 (17K) [text/plain]
+Сохранение в: «cmake/HunterGate.cmake»
 
-1 directory, 1 file
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# popd
-/home/student/Vladimir1209/workspace
-root@LabPythonVM:/home/student/Vladimir1209/workspace# export LAB_NUMBER=06
-root@LabPythonVM:/home/student/Vladimir1209/workspace# git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
-Клонирование в «tasks/lab06»...
-remote: Enumerating objects: 117, done.
-remote: Counting objects: 100% (37/37), done.
-remote: Compressing objects: 100% (4/4), done.
-remote: Total 117 (delta 35), reused 33 (delta 33), pack-reused 80 (from 1)
-Получение объектов: 100% (117/117), 1.33 МиБ | 5.63 МиБ/с, готово.
-Определение изменений: 100% (36/36), готово.
+cmake/HunterGate.cm 100%[===================>]  16,83K  --.-KB/s    за 0,005s  
+
+2025-04-17 22:29:05 (3,25 MB/s) - «cmake/HunterGate.cmake» сохранён [17231/17231]
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# cmake -H. -B_builds -DBUILD_TESTS=ON
+-- [hunter] Calculating Toolchain-SHA1
+-- [hunter] Calculating Config-SHA1
+-- [hunter] HUNTER_ROOT: /root/.hunter
+-- [hunter] [ Hunter-ID: 23f1b5a | Toolchain-ID: 534d6c7 | Config-ID: bf2be25 ]
+-- [hunter] GTEST_ROOT: /root/.hunter/_Base/23f1b5a/534d6c7/bf2be25/Install (ver.: 1.11.0)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/student/MaRLoR-64/workspace/projects/lab07/_builds
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# cmake --build _builds
+[ 25%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
+[ 50%] Linking CXX static library libprint.a
+[ 50%] Built target print
+[ 75%] Building CXX object CMakeFiles/check.dir/tests/test1.cpp.o
+[100%] Linking CXX executable check
+[100%] Built target check
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# cmake --build _builds --target test
+Running tests...
+Test project /home/student/MaRLoR-64/workspace/projects/lab07/_builds
+    Start 1: check
+1/1 Test #1: check ............................   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.00 sec
 ```
-##Report
+Настройка Hunter вручную
 ```bash
-root@LabPythonVM:/home/student/Vladimir1209/workspace/projects/lab06# popd
-/home/student/Vladimir1209/workspace
-root@LabPythonVM:/home/student/Vladimir1209/workspace# export LAB_NUMBER=06
-root@LabPythonVM:/home/student/Vladimir1209/workspace# git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
-Клонирование в «tasks/lab06»...
-remote: Enumerating objects: 117, done.
-remote: Counting objects: 100% (37/37), done.
-remote: Compressing objects: 100% (4/4), done.
-remote: Total 117 (delta 35), reused 33 (delta 33), pack-reused 80 (from 1)
-Получение объектов: 100% (117/117), 1.33 МиБ | 5.63 МиБ/с, готово.
-Определение изменений: 100% (36/36), готово.
-root@LabPythonVM:/home/student/Vladimir1209/workspace# mkdir reports/lab${LAB_NUMBER}
-root@LabPythonVM:/home/student/Vladimir1209/workspace# cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md
-root@LabPythonVM:/home/student/Vladimir1209/workspace# cd reports/lab${LAB_NUMBER}
-root@LabPythonVM:/home/student/Vladimir1209/workspace/reports/lab06# edit REPORT.md
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# git clone https://github.com/cpp-pm/hunter $HOME/projects/hunter
+Клонирование в «/root/projects/hunter»...
+remote: Enumerating objects: 53004, done.
+remote: Counting objects: 100% (857/857), done.
+remote: Compressing objects: 100% (230/230), done.
+remote: Total 53004 (delta 679), reused 627 (delta 627), pack-reused 52147 (from 3)
+Получение объектов: 100% (53004/53004), 13.80 МиБ | 24.79 МиБ/с, готово.
+Определение изменений: 100% (33126/33126), готово.
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# export HUNTER_ROOT=$HOME/projects/hunter
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# rm -rf _builds
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# gsed -i '/cmake_minimum_required(VERSION 3.4)/a\
+include("cmake/HunterGate.cmake")\
+HunterGate(
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.308.tar.gz"
+    SHA1 "23f1b5a0acffae50fda423388c843a8e7b6e1eb0"
+)' CMakeLists.txt
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# git rm -rf third-party/gtest
+rm 'third-party/gtest'
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# gsed -i '/set(PRINT_VERSION_STRING "v\${PRINT_VERSION}")/a\
+hunter_add_package(GTest)\
+find_package(GTest CONFIG REQUIRED)' CMakeLists.txt
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# gsed -i 's/add_subdirectory(third-party\/gtest)//' CMakeLists.txt
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# gsed -i 's/gtest_main/GTest::main/' CMakeLists.txt
 ```
+Сборка проекта с использованием Hunter
+```bash
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# cmake -H. -B_builds -DBUILD_TESTS=ON
+~~~~~~~
+loading initial cache file /root/projects/hunter/_Base/xxxxxxx/534d6c7/d14f46d/Build/GTest/args.cmake
+[100%] Completed 'GTest-Debug'
+[100%] Built target GTest-Debug
+-- [hunter] Build step successful (dir: /root/projects/hunter/_Base/xxxxxxx/534d6c7/d14f46d/Build/GTest)
+-- [hunter] Cache saved: /root/projects/hunter/_Base/Cache/raw/16e18410a34066bd0176cf601b8920878ccf4037.tar.bz2
+-- Found GTest: /root/projects/hunter/_Base/xxxxxxx/534d6c7/d14f46d/Install/lib/cmake/GTest/GTestConfig.cmake (found version "1.15.2")  
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/student/MaRLoR-64/workspace/projects/lab07/_builds
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# cmake --build _builds
+[ 25%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
+[ 50%] Linking CXX static library libprint.a
+[ 50%] Built target print
+[ 75%] Building CXX object CMakeFiles/check.dir/tests/test1.cpp.o
+[100%] Linking CXX executable check
+[100%] Built target check
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# cmake --build _builds --target test
+Running tests...
+Test project /home/student/MaRLoR-64/workspace/projects/lab07/_builds
+    Start 1: check
+1/1 Test #1: check ............................   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.01 sec
+```
+Настройка Polly
+```bash
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# mkdir tools
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# git submodule add https://github.com/ruslo/polly tools/polly
+Клонирование в «/home/student/MaRLoR-64/workspace/projects/lab07/tools/polly»...
+remote: Enumerating objects: 6578, done.
+remote: Counting objects: 100% (32/32), done.
+remote: Compressing objects: 100% (15/15), done.
+remote: Total 6578 (delta 21), reused 20 (delta 17), pack-reused 6546 (from 1)
+Получение объектов: 100% (6578/6578), 1.68 МиБ | 3.25 МиБ/с, готово.
+Определение изменений: 100% (4551/4551), готово.
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# tools/polly/bin/polly.py --test
+Python version: 3.11
+Build dir: /home/student/MaRLoR-64/workspace/projects/lab07/_builds/default
+...
+SUCCESS
+root@LabPythonVM:/home/student/MaRLoR-64/workspace/projects/lab07# tools/polly/bin/polly.py --install
+Python version: 3.11
+Build dir: /home/student/MaRLoR-64/workspace/projects/lab07/_builds/default
+...
+SUCCESS
+```
+
