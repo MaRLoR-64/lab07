@@ -1,0 +1,14 @@
+Execute command: [
+  `which`
+  `cmake`
+]
+[/home/student/Vladimir1209/workspace/projects/lab07]> "which" "cmake"
+/usr/bin/cmake
+Execute command: [
+  `cmake`
+  `--version`
+]
+[/home/student/Vladimir1209/workspace/projects/lab07]> "cmake" "--version"
+cmake version 3.25.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
